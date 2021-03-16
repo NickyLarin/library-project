@@ -4,12 +4,14 @@ import { createConnection } from 'typeorm';
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
 import { Request, Response } from 'express';
-import { Routes } from './routes';
 // import { User } from './entity/User';
 import { ConfigServiceJson } from './service/ConfigServiceJson';
 import { container } from 'tsyringe';
 import { App } from './types/app';
 import { Service } from './enum/service';
+import { Book } from './entity/Book';
+import { Author } from './entity/Author';
+// import {Routes} from './routes';
 
 const config = container.resolve<App.Config.Service>(Service.Config);
 
@@ -19,16 +21,13 @@ createConnection()
     const app = express();
     app.use(bodyParser.json());
 
+    const { Routes } = require('./routes');
     // register express routes from defined application routes
     Routes.forEach((route) => {
       (app as any)[route.method](
         route.route,
-        (req: Request, res: Response, next: Function) => {
-          const result = new (route.controller as any)()[route.action](
-            req,
-            res,
-            next
-          );
+        (req: Request, res: Response, next: express.NextFunction) => {
+          const result = route.action(req, res, next);
           if (result instanceof Promise) {
             result.then((result) =>
               result !== null && result !== undefined
@@ -48,21 +47,20 @@ createConnection()
     // start express server
     app.listen(config.port);
 
-    // insert new users for test
-    // await connection.manager.save(
-    //   connection.manager.create(User, {
-    //     firstName: 'Timber',
-    //     lastName: 'Saw',
-    //     age: 27,
-    //   })
-    // );
-    // await connection.manager.save(
-    //   connection.manager.create(User, {
-    //     firstName: 'Phantom',
-    //     lastName: 'Assassin',
-    //     age: 24,
-    //   })
-    // );
+    // insert test data
+    const author1 = connection.manager.create(Author, {
+      name: 'Test Author 1',
+    });
+    const author2 = connection.manager.create(Author, {
+      name: 'Test Author 2',
+    });
+    await connection.manager.save([author1, author2]);
+    const book = connection.manager.create(Book, {
+      title: 'Test book',
+      year: 2021,
+      authors: [author1, author2],
+    });
+    await connection.manager.save(book);
 
     console.log(
       `Express server has started on port ${config.port}. Open http://localhost:${config.port}/users to see results`

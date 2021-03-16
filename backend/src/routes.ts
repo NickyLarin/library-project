@@ -1,25 +1,15 @@
 // import {UserController} from "./controller/UserController";
+import { container } from 'tsyringe';
+import { BookController } from './controller/BookController';
+import { App } from './types/app';
 
-export const Routes = [
-  //     {
-  //     method: "get",
-  //     route: "/users",
-  //     controller: UserController,
-  //     action: "all"
-  // }, {
-  //     method: "get",
-  //     route: "/users/:id",
-  //     controller: UserController,
-  //     action: "one"
-  // }, {
-  //     method: "post",
-  //     route: "/users",
-  //     controller: UserController,
-  //     action: "save"
-  // }, {
-  //     method: "delete",
-  //     route: "/users/:id",
-  //     controller: UserController,
-  //     action: "remove"
-  // }
+const bookController = container.resolve(BookController);
+
+export const Routes: App.Route[] = [
+  {
+    method: 'get',
+    route: '/books',
+    controller: bookController,
+    action: bookController.all,
+  },
 ];

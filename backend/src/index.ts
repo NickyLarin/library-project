@@ -4,8 +4,6 @@ import { createConnection } from 'typeorm';
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
 import { Request, Response } from 'express';
-// import { User } from './entity/User';
-import { ConfigServiceJson } from './service/ConfigServiceJson';
 import { container } from 'tsyringe';
 import { App } from './types/app';
 import { Service } from './enum/service';
@@ -14,6 +12,7 @@ import { Author } from './entity/Author';
 // import {Routes} from './routes';
 
 const config = container.resolve<App.Config.Service>(Service.Config);
+const logger = container.resolve<App.Logger.Service>(Service.Logger);
 
 createConnection()
   .then(async (connection) => {
@@ -26,8 +25,8 @@ createConnection()
     Routes.forEach((route) => {
       (app as any)[route.method](
         route.route,
-        (req: Request, res: Response, next: express.NextFunction) => {
-          const result = route.action(req, res, next);
+        async (req: Request, res: Response, next: express.NextFunction) => {
+          const result = await route.action(req, res, next);
           if (result instanceof Promise) {
             result.then((result) =>
               result !== null && result !== undefined
@@ -62,7 +61,7 @@ createConnection()
     });
     await connection.manager.save(book);
 
-    console.log(
+    logger.debug(
       `Express server has started on port ${config.port}. Open http://localhost:${config.port}/users to see results`
     );
   })

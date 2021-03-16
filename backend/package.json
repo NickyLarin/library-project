@@ -15,7 +15,8 @@
     "reflect-metadata": "^0.1.10",
     "sqlite3": "^4.0.3",
     "tsyringe": "^4.4.0",
-    "typeorm": "0.2.31"
+    "typeorm": "0.2.31",
+    "winston": "^3.3.3"
   },
   "scripts": {
     "dev": "nodemon",

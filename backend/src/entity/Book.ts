@@ -4,21 +4,21 @@ import {
   Column,
   JoinTable,
   ManyToMany,
-} from 'typeorm';
-import { Author } from './Author';
+} from 'typeorm'
+import { Author } from './Author'
 
 @Entity()
 export class Book {
   @PrimaryGeneratedColumn()
-  id: number;
+  id: number
 
   @Column()
-  title: string;
+  title: string
 
   @Column()
-  year: number;
+  year: number
 
   @ManyToMany(() => Author)
   @JoinTable()
-  authors: Author[];
+  authors: Author[]
 }

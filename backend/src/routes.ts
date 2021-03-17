@@ -1,12 +1,12 @@
 // import {UserController} from "./controller/UserController";
-import { container } from 'tsyringe';
-import { BookController } from './controller/BookController';
-import { Controller } from './enum/controller';
-import { App } from './types/app';
+import { container } from 'tsyringe'
+import { BookController } from './controller/BookController'
+import { Controller } from './enum/controller'
+import { App } from './types/app'
 
 const bookController = container.resolve<App.Controller.BookController>(
-  Controller.BookController
-);
+  Controller.BookController,
+)
 
 export const Routes: App.Route[] = [
   {
@@ -15,4 +15,4 @@ export const Routes: App.Route[] = [
     controller: bookController,
     action: bookController.all,
   },
-];
+]

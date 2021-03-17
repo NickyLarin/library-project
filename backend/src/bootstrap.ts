@@ -6,12 +6,14 @@ import { LoggerService } from './service/LoggerService'
 import { Controller } from './enum/controller'
 import { BookController } from './controller/BookController'
 
+const SingletonContainerOpt = { lifecycle: Lifecycle.Singleton }
+
 container.register<App.Config.Service>(
   Service.Config,
   {
     useClass: ConfigServiceJson,
   },
-  { lifecycle: Lifecycle.Singleton },
+  SingletonContainerOpt,
 )
 
 container.register<App.Logger.Service>(
@@ -19,7 +21,7 @@ container.register<App.Logger.Service>(
   {
     useClass: LoggerService,
   },
-  { lifecycle: Lifecycle.Singleton },
+  SingletonContainerOpt,
 )
 
 container.register<App.Controller.BookController>(
@@ -27,5 +29,5 @@ container.register<App.Controller.BookController>(
   {
     useClass: BookController,
   },
-  { lifecycle: Lifecycle.Singleton },
+  SingletonContainerOpt,
 )

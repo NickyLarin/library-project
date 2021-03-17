@@ -15,4 +15,16 @@ export const Routes: App.Route[] = [
     controller: bookController,
     action: bookController.all,
   },
+  {
+    method: 'get',
+    route: '/books/:id',
+    controller: bookController,
+    action: bookController.one,
+  },
+  {
+    method: 'post',
+    route: '/books',
+    controller: bookController,
+    action: bookController.save,
+  },
 ]

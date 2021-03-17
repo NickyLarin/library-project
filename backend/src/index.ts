@@ -9,6 +9,9 @@ import { App } from './types/app'
 import { Service } from './enum/service'
 import { Book } from './entity/Book'
 import { Author } from './entity/Author'
+import { error } from './utils'
+import { NotFoundError } from './error/NotFoundError'
+import { BadRequestError } from './error/BadRequestError'
 // import {Routes} from './routes';
 
 const config = container.resolve<App.Config.Service>(Service.Config)
@@ -26,18 +29,21 @@ createConnection()
       ;(app as any)[route.method](
         route.route,
         async (req: Request, res: Response, next: express.NextFunction) => {
-          const result = await route.action(req, res, next)
-          if (result instanceof Promise) {
-            result.then((result) =>
-              result !== null && result !== undefined
-                ? res.send(result)
-                : undefined,
-            )
-          } else if (result !== null && result !== undefined) {
-            res.json(result)
+          try {
+            await route.action(req, res, next)
+          } catch (err) {
+            if (err?.name === 'ValidationError') {
+              error(new BadRequestError(err?.errors ?? []), req, res)
+            } else {
+              error(err, req, res)
+            }
           }
         },
       )
+    })
+
+    app.all('*', (req: Request, res: Response) => {
+      error(new NotFoundError(), req, res)
     })
 
     // setup express app here

@@ -1,8 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
-import { NamingStrategyNotFoundError } from 'typeorm'
-import { Author } from '../entity/Author'
-import { Book } from '../entity/Book'
 import { LogLevel } from '../enum/log-level'
+import { Book } from '../entity/Book'
 
 export declare namespace App {
   namespace Config {
@@ -35,7 +33,7 @@ export declare namespace App {
       interface Body {
         title: string
         year: number
-        authors: Array<Author.Create.Body>
+        authors: Array<Author.Create.Body | number>
       }
     }
   }
@@ -74,6 +72,20 @@ export declare namespace App {
       save: Action
     }
     interface BookController extends BaseController {}
+  }
+
+  namespace Repository {
+    namespace Error {
+      interface RepositoryError {
+        readonly message: string
+        readonly errors?: ReadonlyArray<string>
+      }
+    }
+    interface BookRepository {
+      all: () => Promise<Book[]>
+      one: (id: number) => Promise<Book>
+      save: (newBook: App.Book.Create.Body) => Promise<Book>
+    }
   }
 
   interface Route {

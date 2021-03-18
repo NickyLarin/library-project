@@ -1,7 +1,7 @@
 import { HttpError } from './HttpError'
 
 export class NotFoundError extends HttpError {
-  constructor() {
-    super('Not found', 404)
+  constructor(errors?: ReadonlyArray<string>) {
+    super('Not found', 404, errors)
   }
 }
